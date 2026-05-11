@@ -26,7 +26,7 @@ function Dashboard() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <h1 className="page-heading">Dashboard</h1>
           <button
-            onClick={handleLogout}
+            onClick={logout}
             style={{
               padding: '0.5rem 1rem',
               backgroundColor: '#dc2626',
