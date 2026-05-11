@@ -12,6 +12,8 @@ import Dashboard from "./pages/Dashboard";
 
 import NotFound from "./pages/NotFound";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
 
 return (
@@ -28,7 +30,7 @@ return (
 
 <Route path="register" element={<Register />} />
 
-<Route path="dashboard" element={<Dashboard />} />
+<Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
 <Route path="*" element={<NotFound />} />
 
