@@ -1,42 +1,10 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 function Dashboard() {
-  const navigate = useNavigate()
-  const [user, setUser] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { user, loading, logout, isAuthenticated } = useAuth()
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('user')
-
-    if (!token || !userData) {
-      navigate('/login')
-      return
-    }
-
-    try {
-      const parsedUser = JSON.parse(userData)
-      setUser(parsedUser)
-    } catch (error) {
-      console.error('Error parsing user data:', error)
-      // Clear invalid data and redirect
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      navigate('/login')
-    }
-
-    setIsLoading(false)
-  }, [navigate])
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    navigate('/login')
-  }
-
-  if (isLoading) {
+  if (loading) {
     return (
       <section style={{ padding: '3rem 0' }}>
         <div className="container section-card">
@@ -48,8 +16,8 @@ function Dashboard() {
     )
   }
 
-  if (!user) {
-    return null // Will redirect in useEffect
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />
   }
 
   return (

@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
+  const { login, isAuthenticated, loading } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -10,13 +12,18 @@ function Login() {
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard')
+    }
+  }, [loading, isAuthenticated, navigate])
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -53,34 +60,15 @@ function Login() {
 
     setIsLoading(true)
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      })
+    const result = await login(formData)
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        // Store token and user data
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-
-        // Redirect to dashboard
-        navigate('/dashboard')
-      } else {
-        setErrors({ general: data.message || 'Login failed. Please try again.' })
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-      setErrors({ general: 'Network error. Please check your connection and try again.' })
-    } finally {
-      setIsLoading(false)
+    if (result.success) {
+      navigate('/dashboard')
+    } else {
+      setErrors({ general: result.message })
     }
+
+    setIsLoading(false)
   }
 
   return (
