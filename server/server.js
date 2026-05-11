@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import connectDatabase from './config/database.js'
 import userRoutes from './routes/userRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/users', userRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/posts', postRoutes)
 
 const PORT = process.env.PORT || 5000
 
